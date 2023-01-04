@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+     <!-- **DO THIS**: -->
+    <!--   Replace SDK_VERSION_NUMBER with the current SDK version number -->
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1.24.min.js"></script>
+    <script src="./s3_photoExample.js"></script>
+    <script>
+       function getHtml(template) {
+          return template.join('\n');
+       }
+       listAlbums();
+    </script>
+  </head>
+  <body>
+    <h1>My Photos samples</h1>
+    <div id="app"></div>
+  </body>
+</html>
+<!doctype html>
+<head>
+<!-- <script src="https://sdk.amazonaws.com/js/aws-sdk-2.357.0.min.js"></script> -->
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1287.0.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+<script type="text/javascript">
+
+//Bucket Configurations
+
+ var bucketName = "marcrinepracticebucket00";
+ var bucketRegion = "us-east-1";
+ var IdentityPoolId = "us-east-1:73df14d8-b2e2-49fa-a5cb-fea2e0f1aaa8";
+
+ console.log(bucketName);
+ console.log(bucketRegion);
+
+ AWS.config.update({
+                region: bucketRegion,
+                credentials: new AWS.CognitoIdentityCredentials({
+                IdentityPoolId: IdentityPoolId
+                })
+            });
+
+            var s3 = new AWS.S3({
+                apiVersion: '2006-03-01',
+                params: {Bucket: bucketName}
+        });
+</script>
+</head>
+<body>
+    <!-- A functional html code-->
+    <div>
+        <input type="file" id="fileUpload">
+    </div>
+
+    <div>
+    <button onclick="s3upload()">Submit</button>
+    </div>
+
+    <progress max=”100” value=”0”></progress>
+
+    <script type="text/javascript">
+
+      function s3upload() {  
+                var files = document.getElementById('fileUpload').files;
+                if (files) 
+                {
+                    var file = files[0];
+                    var fileName = file.name;
+                    var filePath = 'marcrine/' + fileName;
+                    var fileUrl = 'https://' + bucketRegion + '.amazonaws.com/marcrinepracticebucket00/' +  filePath;
+            
+                    s3.upload({
+                                    Key: filePath,
+                                    Body: file,
+                                    ACL: 'public-read'
+                                }, function(err, data) {
+                                    if(err) {
+                                        reject('error');
+                                    }
+                                    
+                                    alert('Successfully Uploaded!');
+                                }).on('httpUploadProgress', function (progress) {
+                                    var uploaded = parseInt((progress.loaded * 100) / progress.total);
+                                    $("progress").attr('value', uploaded);
+                                });
+                }
+      };
+    </script>
+</body>
+</html>
